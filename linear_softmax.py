@@ -7,10 +7,8 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 tf.set_random_seed(0)
 
-#TODO: ask about using fashion-MNIST here
-#TODO: ask about how to load data from hops
 # load data
-mnist = input_data.read_data_sets('input/data', one_hot=True)
+mnist = input_data.read_data_sets('input/fashion', one_hot=True)
 
 # 1. Define Variables and Placeholders
 # None means that a dimension can be of any length
@@ -61,12 +59,12 @@ sess.run(init)
 
 '''
 Results with Gradient Descent (10.000 iterations):
-    Final accuracy: 0.95
-    Final cross entropy: 0.200401
+    Final accuracy: 0.85
+    Final cross entropy: 0.426961
 
 Results with Adam Optimizer (10.000 iterations):
-    Final accuracy: 0.93
-    Final cross entropy: 0.242558
+    Final accuracy: 0.85
+    Final cross entropy: 0.484273
 
 '''
 
