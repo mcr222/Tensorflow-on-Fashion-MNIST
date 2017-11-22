@@ -8,7 +8,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 tf.set_random_seed(0)
 
 # load data
-mnist = input_data.read_data_sets('input/data', one_hot=True)
+mnist = input_data.read_data_sets('input/fashion', one_hot=True)
 
 # 1. Define Variables and Placeholders
 
