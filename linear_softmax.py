@@ -45,7 +45,7 @@ cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=Y_
 
 # 4. Define the accuracy 
 #predictions is an array of booleans, needs to be casted to a number (True->1, False->0)
-predictions = tf.equal(tf.arg_max(model, 1),tf.arg_max(Y_, 1))
+predictions = tf.equal(tf.argmax(model, 1),tf.argmax(Y_, 1))
 accuracy = tf.reduce_mean(tf.cast(predictions,tf.float32))
 
 # 5. Define an optimizer
@@ -53,7 +53,7 @@ accuracy = tf.reduce_mean(tf.cast(predictions,tf.float32))
 train_step = tf.train.AdamOptimizer(0.005).minimize(cross_entropy)
 
 # initialize
-init = tf.initialize_all_variables()
+init = tf.global_variables_initializer()
 sess = tf.Session()
 sess.run(init)
 
@@ -69,8 +69,9 @@ Results with Adam Optimizer (10.000 iterations):
 '''
 
 def training_step(i, update_test_data, update_train_data):
-
-    print "\r", i
+    
+    if i%1000==0:
+        print i
     ####### actual learning 
     # reading batches of 100 images with 100 labels
     batch_X, batch_Y = mnist.train.next_batch(100)
@@ -120,15 +121,14 @@ for i in range(training_iter):
 print("Final accuracy: " + str(train_a[-1]))
 print("Final cross entropy: " + str(train_c[-1]))
 
-
 # accuracy training vs testing dataset
-plt.plot(train_a)
+plt.plot(train_a,'r')
 plt.plot(test_a)
 plt.grid(True)
 plt.show()
 
 # loss training vs testing dataset
-plt.plot(train_c)
+plt.plot(train_c,'r')
 plt.plot(test_c)
 plt.grid(True)
 plt.show()
@@ -136,12 +136,12 @@ plt.show()
 # Zoom in on the tail of the plots
 zoom_point = 50
 x_range = range(zoom_point,training_iter/epoch_size)
-plt.plot(x_range, train_a[zoom_point:])
+plt.plot(x_range, train_a[zoom_point:],'r')
 plt.plot(x_range, test_a[zoom_point:])
 plt.grid(True)
 plt.show()
 
-plt.plot(train_c[zoom_point:])
+plt.plot(train_c[zoom_point:],'r')
 plt.plot(test_c[zoom_point:])
 plt.grid(True)
 plt.show()

@@ -28,7 +28,8 @@ sess.run(init)
 
 def training_step(i, update_test_data, update_train_data):
 
-    print "\r", i,
+    if i%1000==0:
+        print i
     ####### actual learning 
     # reading batches of 100 images with 100 labels
     batch_X, batch_Y = mnist.train.next_batch(100)
@@ -75,15 +76,17 @@ for i in range(training_iter):
     test_c += tc
     
 # 7. Plot and visualise the accuracy and loss
+print("Final accuracy: " + str(train_a[-1]))
+print("Final cross entropy: " + str(train_c[-1]))
 
 # accuracy training vs testing dataset
-plt.plot(train_a)
+plt.plot(train_a,'r')
 plt.plot(test_a)
 plt.grid(True)
 plt.show()
 
 # loss training vs testing dataset
-plt.plot(train_c)
+plt.plot(train_c,'r')
 plt.plot(test_c)
 plt.grid(True)
 plt.show()
@@ -91,12 +94,12 @@ plt.show()
 # Zoom in on the tail of the plots
 zoom_point = 50
 x_range = range(zoom_point,training_iter/epoch_size)
-plt.plot(x_range, train_a[zoom_point:])
+plt.plot(x_range, train_a[zoom_point:],'r')
 plt.plot(x_range, test_a[zoom_point:])
 plt.grid(True)
 plt.show()
 
-plt.plot(train_c[zoom_point:])
+plt.plot(train_c[zoom_point:],'r')
 plt.plot(test_c[zoom_point:])
 plt.grid(True)
 plt.show()
