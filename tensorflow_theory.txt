@@ -1,0 +1,93 @@
+Tensors:
+	A tensor consists of a set of primitive values shaped into an array of any number 
+	of dimensions. A tensor's rank is its number of dimensions.
+	
+Computational graph:
+	A computational graph is a series of TensorFlow operations arranged into a graph of nodes.
+	Each node takes zero or more tensors as inputs and produces a tensor as an output. 
+	
+	Constants:
+		TensorFlow constants (type of node), it takes no inputs, and it outputs a value it stores internally.
+		Constants are initialized when you call tf.constant, and their value can never change. Ex: tf.constant()
+	
+	Session: 
+		To actually evaluate the nodes, we must run the computational graph within a session. A session 
+		encapsulates the control and state of the TensorFlow runtime.
+		Ex: sess = tf.Session()
+			sess.run()
+		
+		
+	Operations:
+		We can build more complicated computations by combining Tensor nodes with operations (Operations are also nodes).
+		Like: tf.add
+	
+	Placeholders:
+		A graph can be parameterized to accept external inputs, known as placeholders. A placeholder is a promise 
+		to provide a value later. Ex: a = tf.placeholder(tf.float32)
+		
+		We can evaluate this graph with multiple inputs by using the feed_dict argument to the run method to feed 
+		concrete values to the placeholders (can pass a list of values to evaluate). Ex: sess.run(nodes, feed_dict)
+	
+	Variable:
+		Variables allow us to add trainable parameters to a graph. They are constructed with a type and initial value.
+		Ex: tf.Variable([-.3], dtype=tf.float32)
+		
+		To initialize all the variables in a TensorFlow program, you must explicitly call a special operation as follows:
+			init = tf.global_variables_initializer()
+			sess.run(init) #this runs the initializer to set the variable values
+		
+		init is a handle to the TensorFlow sub-graph that initializes all the global variables. Until we call sess.run, 
+		the variables are uninitialized.
+		
+		A variable is initialized to the value provided to tf.Variable but can be changed using operations like tf.assign. 
+	
+	Loss function:
+		Add nodes after the model graph to compute the loss function with the output of the model graph. Use a placeholder
+		to input the expected predictions of the model graph. Example of squared error loss:
+			expected_pred = tf.placeholder(tf.float32)
+			squared_deltas = tf.square(graph_model - expected_pred)
+			loss = tf.reduce_sum(squared_deltas)
+			sess.run(loss, {x: [1, 2, 3, 4], y: [0, -1, -2, -3]})
+	
+	Train API:
+		TensorFlow provides optimizers that slowly change each variable in order to minimize the loss function.
+		The simplest optimizer is gradient descent (modifies each variable according to the magnitude of the 
+		derivative of loss with respect to that variable).
+		
+		tf.train() creates and optimizer than can be used to minimize a loss function considering all tf.Variable's
+		within the graph_model, list of variables collected in the graph under the key `GraphKeys.TRAINABLE_VARIABLES` 
+		(or variables specified in parameter var_list). Ex:
+			optimizer = tf.train.GradientDescentOptimizer(0.01)
+			train = optimizer.minimize(loss) #returns an Operation that updates the variables in `var_list`.
+			sess.run(init) # reset values to incorrect defaults.
+			for i in range(1000):
+  				sess.run(train, {x: [1, 2, 3, 4], y: [0, -1, -2, -3]})
+  			
+  			The second parameter is the feed_dict, where a tensor is replaced by the values specified (thus in
+  			this example x and y have to be tensors)
+  			
+  		(TO CONTRAST) NOTE that, running the Operation train performs one iteration of the minimization, that is, it combines calls 
+  		`compute_gradients()` and `apply_gradients()` once. Thus it is common to run it several times, also very tipicaly
+  		using different data for each iteration (batches).
+		
+	Gradient:
+		TensorFlow can automatically produce derivatives given only a description of the model 
+		using the function tf.gradients(). It is simpler to use and optimizer.minimize().
+		
+		The gradient computing is done by automatic differentiation
+		(https://stats.stackexchange.com/questions/257746/how-does-tensorflow-tf-train-optimizer-compute-gradients)  
+			
+Estimator:
+	tf.estimator is a high-level TensorFlow library that simplifies the mechanics of machine learning, including the following:
+	running training loops, running evaluation loops, managing data sets.
+	An estimator is the front end to invoke training (fitting) and evaluation (inference). There are many predefined types 
+	like linear regression, linear classification, and many neural network classifiers and regressors.
+
+Softmax layer:
+	From a list of values (floats), it returns the probability of each one when considering that the higher value has more
+	probability. It does this by exponentiating the values (higher will be higher) and normalizing (dividing by all values)
+	so to get a vector of probabilities.
+	
+		
+		
+		
