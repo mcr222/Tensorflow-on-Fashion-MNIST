@@ -76,8 +76,9 @@ for i in range(training_iter):
     test_c += tc
     
 # 7. Plot and visualise the accuracy and loss
-print("Final accuracy: " + str(train_a[-1]))
-print("Final cross entropy: " + str(train_c[-1]))
+print("Final accuracy: " + str(test_a[-1]))
+print("Final cross entropy: " + str(test_c[-1]))
+
 
 # accuracy training vs testing dataset
 plt.plot(train_a,'r')

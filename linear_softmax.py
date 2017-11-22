@@ -49,8 +49,8 @@ predictions = tf.equal(tf.argmax(model, 1),tf.argmax(Y_, 1))
 accuracy = tf.reduce_mean(tf.cast(predictions,tf.float32))
 
 # 5. Define an optimizer
-#train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
-train_step = tf.train.AdamOptimizer(0.005).minimize(cross_entropy)
+train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
+#train_step = tf.train.AdamOptimizer(0.005).minimize(cross_entropy)
 
 # initialize
 init = tf.global_variables_initializer()
@@ -59,12 +59,12 @@ sess.run(init)
 
 '''
 Results with Gradient Descent (10.000 iterations):
-    Final accuracy: 0.85
-    Final cross entropy: 0.426961
+    Final accuracy: 0.8233
+    Final cross entropy: 0.696066
 
 Results with Adam Optimizer (10.000 iterations):
-    Final accuracy: 0.85
-    Final cross entropy: 0.484273
+    Final accuracy: 0.8265
+    Final cross entropy: 0.560972
 
 '''
 
@@ -118,8 +118,9 @@ for i in range(training_iter):
     test_c += tc
     
 # 7. Plot and visualise the accuracy and loss
-print("Final accuracy: " + str(train_a[-1]))
-print("Final cross entropy: " + str(train_c[-1]))
+print("Final accuracy: " + str(test_a[-1]))
+print("Final cross entropy: " + str(test_c[-1]))
+
 
 # accuracy training vs testing dataset
 plt.plot(train_a,'r')

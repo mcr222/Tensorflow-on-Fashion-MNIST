@@ -87,7 +87,32 @@ Softmax layer:
 	From a list of values (floats), it returns the probability of each one when considering that the higher value has more
 	probability. It does this by exponentiating the values (higher will be higher) and normalizing (dividing by all values)
 	so to get a vector of probabilities.
+
+Dropout regularization:
+	For each training example/iteration, with certain probability, some neurons of a layer will be set to zero so that they
+	are not considered for training. 
 	
-		
+	This way we force the training in a smaller (random) network, reducing overfitting.
+	
+	Moreover, we are forcing the layers to not rely completely in one previous activation, thus forcing, in a sense, that
+	layers work with a consensus of the previous layers outputs, avoiding the fixation in a single features of one layer.
+	
+	Additionally, units cannot co-adapt to other units.
+	
+	On test data, we do not use dropout probabilities to hide neurons, we use the full network.
+	
+	QUESTION: if we have dropout (specially if high), can we reuse training examples to train? With dropout we essentially block 
+	some neurons, so we are kind of limiting the input features of one example. Therefore, if we retrain the example on
+	another network (differently blocked neurons) it might add extra information since other features will be blocked.
+	OBS: similar to the approach of blocking parts of an image when training.
+
+Learning rate decay:
+	Learning rate is the size of the step taken to minimize the loss function. If the learning rate is fixed, the solution
+	can oscillate around the minimum or maybe not go fast enough.
+	
+	With the learning rate decay, we reduce the size of the step at each iteration, allowing the start with larger steps that
+	will converge faster, and avoid the oscillations around the minimum since with every iteration the step gets smaller. 
+	
+	
 		
 		
