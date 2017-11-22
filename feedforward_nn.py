@@ -68,20 +68,17 @@ sess.run(init)
 
 '''
 Results with RELU+softmax and Adam Optimizer (10.000 iterations):
-    Final accuracy: 0.93
-    Final cross entropy: 0.208331
+    Final accuracy: 0.884
+    Final cross entropy: 0.370437
 
 Results with RELU+softmax and Gradient Descent (10.000 iterations):
-    Final accuracy: 0.88
-    Final cross entropy: 0.201341
+
 
 Results with sigmoid+softmax and Adam Optimizer (10.000 iterations):
-    Final accuracy: 0.9
-    Final cross entropy: 0.227913
+
 
 Results with sigmoid+softmax and Gradient Descent (10.000 iterations):
-    Final accuracy: 0.89
-    Final cross entropy: 0.284484
+   
 '''
 
 
@@ -135,8 +132,8 @@ for i in range(training_iter):
     test_c += tc
     
 # 7. Plot and visualise the accuracy and loss
-print("Final accuracy: " + str(train_a[-1]))
-print("Final cross entropy: " + str(train_c[-1]))
+print("Final accuracy: " + str(test_a[-1]))
+print("Final cross entropy: " + str(test_c[-1]))
 
 # accuracy training vs testing dataset
 plt.plot(train_a,'r')
