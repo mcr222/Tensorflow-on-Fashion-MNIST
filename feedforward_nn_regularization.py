@@ -58,6 +58,13 @@ if inp == "y":
     With probability `keep_prob`, outputs the input 
     element scaled up by `1 / keep_prob`, otherwise outputs `0`.  The 
     scaling is so that the expected sum is unchanged.
+    
+    !!By default, each element is kept or dropped independently. 
+    Therefore every output value of Y1 can be dropped or not. 
+    
+    Dropping a value means not considering it for the next layer,
+    but it does not mean that its weight is reinitialized (it is just
+    not considered in that training iteration).
     '''
     Y1d = tf.nn.dropout(Y1, pkeep)
     #print("Y1 shape: {shape}".format(shape=Y1.shape))
@@ -104,7 +111,7 @@ Global step can also be updated manually using:
     global_step = tf.assign(global_step, global_step+1)
     sess.run(global_step)
 
-OBS: NOT sure if sess.run(global_step) is necessary to update the value (or if when it is called it
+OBS: NOT sure if sess.run(global_step) is necessary to update the value manually (or if when it is called it
 already updates). 
 '''
 

@@ -25,6 +25,8 @@ B4 = tf.Variable(tf.zeros([30]))
 W5 = tf.Variable(tf.truncated_normal([30, 10], stddev=0.1))
 B5 = tf.Variable(tf.zeros([10]))
 
+#QUESTION: what's the value of relu (it is almost the identity function)
+
 # 2. Define the model
 inp = raw_input("Use RELU activation (y/n)? If not sigmoid will be used.")
 if inp == "y":
