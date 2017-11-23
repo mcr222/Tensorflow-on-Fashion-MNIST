@@ -130,7 +130,7 @@ def train_model(args = (0.75,0.01,"Adam")):
     test_c = []
     
     training_iter = 10000
-    training_iter = 100
+    #training_iter = 100
     epoch_size = 100
     for i in range(training_iter):
         test = False
