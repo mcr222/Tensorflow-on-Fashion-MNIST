@@ -12,78 +12,64 @@ mnist = input_data.read_data_sets('input/fashion', one_hot=True)
 
 XX = tf.placeholder(tf.float32, shape=[None,784])
 
-'''
-QUESTION: if we have dropout (specially if high), can we reuse training examples to train? With dropout we essentially block 
-    some neurons, so we are kind of limiting the input features of one example. Therefore, if we retrain the example on
-    another network (differently blocked neurons) it might add extra information since other features will be blocked.
-    OBS: similar to the approach of blocking parts of an image when training.
-'''
+#If one component of `shape` is the special value -1, the size of that dimension
+#is computed so that the total size remains constant.
+X = tf.reshape(XX, shape= [-1,28,28,1])
 
-'''
-It requires a `global_step` value to
-  compute the decayed learning rate.  You can just pass a TensorFlow variable
-  that you increment at each training step.
-  
-It needs global_step as it is every time independently called (no memory i guess)
-'''
 #Alternative way of providing a decaying learning rate is to provide a scalar placeholder
 #and then on running training provide a value via feed_dict (value can be updated as we want).
 global_step = tf.Variable(0, trainable=False)
-learning_rate = tf.train.exponential_decay(0.02,global_step,100000,0.96)
+learning_rate = tf.train.exponential_decay(0.02, global_step,100000,0.96)
 
-# truncated_normal generates a truncated normal distribution as initializer of variables
-#Weights initialized with small random values between -0.2 and +0.2
-W1 = tf.Variable(tf.truncated_normal([784, 200], stddev=0.1)) # 784 = 28 * 28
-B1 = tf.Variable(tf.zeros([200]))
-W2 = tf.Variable(tf.truncated_normal([200, 100], stddev=0.1))
-B2 = tf.Variable(tf.zeros([100]))
-W3 = tf.Variable(tf.truncated_normal([100, 60], stddev=0.1))
-B3 = tf.Variable(tf.zeros([60]))
-W4 = tf.Variable(tf.truncated_normal([60, 30], stddev=0.1))
-B4 = tf.Variable(tf.zeros([30]))
-W5 = tf.Variable(tf.truncated_normal([30, 10], stddev=0.1))
+
+'''
+W1 will be convoluted with the input image. Note that there will be 4 separate convolutions, since the 
+output dimension of W1 is 4, which means that there are 4 convolution matrices.
+For discrete, two-dimensional variables A and B, the following equation defines the convolution of A and B:
+
+C(j,k)=sum_p(sum_q(A(p,q)B(j-p+1,k-q+1)))
+
+p and q run over all values that lead to legal subscripts of A(p,q) and B(j-p+1,k-q+1).
+This leads to the convolution C = conv2(A,B) has size size(A)+size(B)-1. 
+
+I think in a convolutional layer the convolution is only applied to (j,k) indexes of the input
+thus obtaining a convoluted matrix of the same size as the input. 
+'''
+W1 = tf.Variable(tf.truncated_normal([5, 5, 1, 4], stddev=0.1))
+B1 = tf.Variable(tf.zeros([4]))
+'''
+TODO: CLARIFY W2, for each input channel (4) has 8 matrices, this would
+generate 4*8=32 output channels (but code seems to output 8 channels).
+'''
+W2 = tf.Variable(tf.truncated_normal([5, 5, 4, 8], stddev=0.1))
+B2 = tf.Variable(tf.zeros([8]))
+W3 = tf.Variable(tf.truncated_normal([4, 4, 8, 12], stddev=0.1))
+B3 = tf.Variable(tf.zeros([12]))
+W4 = tf.Variable(tf.truncated_normal([588, 200], stddev=0.1))
+B4 = tf.Variable(tf.zeros([200]))
+W5 = tf.Variable(tf.truncated_normal([200, 10], stddev=0.1))
 B5 = tf.Variable(tf.zeros([10]))
 
 
 # 2. Define the model
 #Note that to define a single value placeholder, a scalar, shape is () or [], not 0
 pkeep = tf.placeholder(tf.float32,())
-
-inp = raw_input("Use RELU activation (y/n)? If not sigmoid will be used.")
-if inp == "y":
-    print("Using RELU for inner layers") 
-    #obs: tf.nn.crelu concatenates the relu activation
-    Y1 = tf.nn.relu(tf.matmul(XX, W1) + B1)
-    '''
-    With probability `keep_prob`, outputs the input 
-    element scaled up by `1 / keep_prob`, otherwise outputs `0`.  The 
-    scaling is so that the expected sum is unchanged.
-    
-    !!By default, each element is kept or dropped independently. 
-    Therefore every output value of Y1 can be dropped or not. 
-    
-    Dropping a value means not considering it for the next layer,
-    but it does not mean that its weight is reinitialized (it is just
-    not considered in that training iteration).
-    '''
-    Y1d = tf.nn.dropout(Y1, pkeep)
-    #print("Y1 shape: {shape}".format(shape=Y1.shape))
-    Y2 = tf.nn.relu(tf.matmul(Y1d, W2) + B2)
-    Y2d = tf.nn.dropout(Y2, pkeep)
-    Y3 = tf.nn.relu(tf.matmul(Y2d, W3) + B3)
-    Y3d = tf.nn.dropout(Y3, pkeep)
-    Y4 = tf.nn.relu(tf.matmul(Y3d, W4) + B4)
-    Y4d = tf.nn.dropout(Y4, pkeep)
-else:
-    print("Using sigmoid for inner layers") 
-    Y1 = tf.nn.sigmoid(tf.matmul(XX, W1) + B1)
-    Y1d = tf.nn.dropout(Y1, pkeep)
-    Y2 = tf.nn.sigmoid(tf.matmul(Y1d, W2) + B2)
-    Y2d = tf.nn.dropout(Y2, pkeep)
-    Y3 = tf.nn.sigmoid(tf.matmul(Y2d, W3) + B3)
-    Y3d = tf.nn.dropout(Y3, pkeep)
-    Y4 = tf.nn.sigmoid(tf.matmul(Y3d, W4) + B4)
-    Y4d = tf.nn.dropout(Y4, pkeep)
+#TODO: check padding
+#The output of this first convolution are 28x28 matrices with 4 channels each.
+#Then B1 is added to each of the channels.
+#TODO: how does addition work?? It seems that it would add the same value to 
+#each of the values of one channel matrix (4 channels and 4 bias values, 1 bias added to the whole channel matrix)
+Y1 = tf.nn.relu(tf.nn.conv2d(X, W1, strides=[1,1,1,1], padding="SAME")+B1)
+Y1d = tf.nn.dropout(Y1, pkeep)
+#as strides every 2x2 steps, only half of the values of the previous output 28x28 are kept: 14x14
+Y2 = tf.nn.relu(tf.nn.conv2d(Y1d, W2, strides=[1,2,2,1],padding="SAME")+B2)
+Y2d = tf.nn.dropout(Y2, pkeep)
+Y3 = tf.nn.relu(tf.nn.conv2d(Y2d, W3, strides=[1,2,2,1],padding="SAME")+B3)
+Y3d = tf.nn.dropout(Y3, pkeep)
+#588=7x7x12 (12 output channels)
+Y3d_reshape = tf.reshape(Y3d, shape=[-1,588])
+Y4 = tf.nn.relu(tf.matmul(Y3d_reshape, W4) + B4)
+Y4d = tf.nn.dropout(Y4, pkeep)
 
 Ylogits = tf.matmul(Y4d, W5) + B5
 Y = tf.nn.softmax(Ylogits)
@@ -106,35 +92,12 @@ accuracy = tf.reduce_mean(tf.cast(predictions,tf.float32))
 
 # Passing global_step to minimize() will increment it at each step.
 train_step = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy,global_step=global_step)
-'''
-Global step can also be updated manually using:
-    global_step = tf.assign(global_step, global_step+1)
-    sess.run(global_step)
-
-OBS: NOT sure if sess.run(global_step) is necessary to update the value manually (or if when it is called it
-already updates). 
-'''
 
 
 # initialize
 init = tf.global_variables_initializer()
 sess = tf.Session()
 sess.run(init)
-
-'''
-Results with RELU+softmax and Adam Optimizer (10.000 iterations):
-    Final accuracy: 0.884
-    Final cross entropy: 0.370437
-
-Results with RELU+softmax and Gradient Descent (10.000 iterations):
-
-
-Results with sigmoid+softmax and Adam Optimizer (10.000 iterations):
-
-
-Results with sigmoid+softmax and Gradient Descent (10.000 iterations):
-   
-'''
 
 
 def training_step(i, update_test_data, update_train_data):

@@ -7,7 +7,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 tf.set_random_seed(0)
 
-# load data
+# load data here we force in the Fashion-MNIST by having the same filenames
 mnist = input_data.read_data_sets('input/fashion', one_hot=True)
 
 # 1. Define Variables and Placeholders
