@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 # 70k mnist dataset that comes with the tensorflow container
 from tensorflow.examples.tutorials.mnist import input_data
 from hyperopt import fmin, tpe, hp, rand
+import hyperopt
 
 train_step = None
 accuracy = None
