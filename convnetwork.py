@@ -19,7 +19,7 @@ X = tf.reshape(XX, shape= [-1,28,28,1])
 #Alternative way of providing a decaying learning rate is to provide a scalar placeholder
 #and then on running training provide a value via feed_dict (value can be updated as we want).
 global_step = tf.Variable(0, trainable=False)
-learning_rate = tf.train.exponential_decay(0.02, global_step,100000,0.96)
+learning_rate = tf.train.exponential_decay(0.01, global_step,100000,0.96)
 
 
 '''
