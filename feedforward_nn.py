@@ -68,21 +68,6 @@ init = tf.global_variables_initializer()
 sess = tf.Session()
 sess.run(init)
 
-'''
-Results with RELU+softmax and Adam Optimizer (10.000 iterations):
-    Final accuracy: 0.884
-    Final cross entropy: 0.370437
-
-Results with RELU+softmax and Gradient Descent (10.000 iterations):
-
-
-Results with sigmoid+softmax and Adam Optimizer (10.000 iterations):
-
-
-Results with sigmoid+softmax and Gradient Descent (10.000 iterations):
-   
-'''
-
 
 def training_step(i, update_test_data, update_train_data):
 
@@ -152,13 +137,66 @@ plt.show()
 # Zoom in on the tail of the plots
 zoom_point = 50
 x_range = range(zoom_point,training_iter/epoch_size)
-plt.plot(x_range, train_a[zoom_point:])
+plt.plot(x_range, train_a[zoom_point:],'r')
 plt.plot(x_range, test_a[zoom_point:])
 plt.grid(True)
 plt.show()
 
-plt.plot(train_c[zoom_point:])
+plt.plot(train_c[zoom_point:],'r')
 plt.plot(test_c[zoom_point:])
 plt.grid(True)
 plt.show()
     
+'''
+What is the maximum accuracy that you can get in each setting for running your
+model with 10000 iterations?
+
+Results with RELU+softmax and Adam Optimizer (10.000 iterations):
+    Final accuracy: 0.884
+    Final cross entropy: 0.370437
+
+Results with RELU+softmax and Gradient Descent (10.000 iterations):
+    Final accuracy: 0.8594
+    Final cross entropy: 0.437678
+
+Results with sigmoid+softmax and Adam Optimizer (10.000 iterations):
+    Final accuracy: 0.8755
+    Final cross entropy: 0.35766
+
+Results with sigmoid+softmax and Gradient Descent (10.000 iterations):
+    Final accuracy: 0.8668
+    Final cross entropy: 0.378372
+'''
+
+'''
+Is there a big difference between the convergence rate of the sigmoid and the ReLU
+? If yes, what is the reason for the difference?
+Yes, RELU converges faster. RELU takes care of the Vanishing gradient problem. Sigmoid
+gets saturated with large activation values, meaning that the gradient at that neuron
+will approach zero and nothing will be learned effectively. As RELU is linear, it does not
+saturate.
+'''
+
+'''
+What is the reason that we use the softmax in our output layer?
+
+We need to normalize the activation outputs (logits) into a probability distribution.
+Softwmax does this by normalizing the logits with an exponential function
+(difference with large and small values is increased with the exponential function).
+'''
+
+'''
+By zooming into the second half of the epochs in accuracy and loss plot, do you
+see any strange behaviour? What is the reason and how you can overcome them?
+(e.g., look at fluctuations or sudden loss increase after a period of decreasing loss).
+
+It seems that in the second half of the epoch the training keeps minimizing loss on training
+data but not on testing data. This is a sign of overfitting.
+
+We can also see that for RELU this tendency is clearer, and this might be because sigmoid tends 
+to saturate and "freeze" the learned values for neurons.
+
+To avoid overfitting we must either reduce the size of our network or use regularization techniques
+ 
+'''
+

@@ -19,7 +19,7 @@ X = tf.reshape(XX, shape= [-1,28,28,1])
 #Alternative way of providing a decaying learning rate is to provide a scalar placeholder
 #and then on running training provide a value via feed_dict (value can be updated as we want).
 global_step = tf.Variable(0, trainable=False)
-learning_rate = tf.train.exponential_decay(0.01, global_step,100000,0.96)
+learning_rate = tf.train.exponential_decay(0.005, global_step,100000,0.96)
 
 
 '''
@@ -181,4 +181,20 @@ plt.plot(train_c[zoom_point:])
 plt.plot(test_c[zoom_point:])
 plt.grid(True)
 plt.show()
-    
+
+'''
+For each of the programming tasks plot accuracy and loss, and analyze whether
+your additions influence the accuracy/loss and if yes, in what way.
+
+Result without regularization:
+    Final accuracy: 0.8923
+    Final cross entropy: 0.488678
+
+Result with learning rate decay:
+    Final accuracy: 0.8856
+    Final cross entropy: 0.553571
+
+Result learningrd and with dropout:
+    Final accuracy: 0.8925
+    Final cross entropy: 0.298207
+'''
