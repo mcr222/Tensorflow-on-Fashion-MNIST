@@ -129,8 +129,8 @@ def train_model(args = (0.75,0.01,"Adam")):
     test_a = []
     test_c = []
     
-    training_iter = 10000
-    #training_iter = 100
+    #training_iter = 10000
+    training_iter = 100
     epoch_size = 100
     for i in range(training_iter):
         test = False
@@ -155,11 +155,15 @@ space = hp.choice('args',
           (hp.uniform('train_prob_keep_Adam',0.5,0.8), hp.uniform('learn_rate_Adam',0.001,0.01), 'Adam'),
           (hp.uniform('train_prob_keep_Grad',0.5,0.8), hp.uniform('learn_rate_Grad',0.1,0.8), 'Gradient')
         ])
-#TODO: how does tpe work?
+'''
+The Tree-structured Parzen Estimator (TPE) is a sequential model-based optimization (SMBO) approach. 
+SMBO methods sequentially construct models to approximate the performance of hyperparameters based on 
+historical measurements, and then subsequently choose new hyperparameters to test based on this model.
+'''
 best = fmin(train_model,
     space=space,
     algo= tpe.suggest,
-    max_evals=5)
+    max_evals=15)
 print best
 print hyperopt.space_eval(space, best)
 

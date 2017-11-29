@@ -29,7 +29,7 @@ It needs global_step as it is every time independently called (no memory i guess
 #Alternative way of providing a decaying learning rate is to provide a scalar placeholder
 #and then on running training provide a value via feed_dict (value can be updated as we want).
 global_step = tf.Variable(0, trainable=False)
-learning_rate = tf.train.exponential_decay(0.02,global_step,100000,0.96)
+learning_rate = tf.train.exponential_decay(0.005,global_step,100000,0.96)
 
 # truncated_normal generates a truncated normal distribution as initializer of variables
 #Weights initialized with small random values between -0.2 and +0.2
@@ -49,7 +49,8 @@ B5 = tf.Variable(tf.zeros([10]))
 #Note that to define a single value placeholder, a scalar, shape is () or [], not 0
 pkeep = tf.placeholder(tf.float32,())
 
-inp = raw_input("Use RELU activation (y/n)? If not sigmoid will be used.")
+#inp = raw_input("Use RELU activation (y/n)? If not sigmoid will be used.")
+inp = "y"
 if inp == "y":
     print("Using RELU for inner layers") 
     #obs: tf.nn.crelu concatenates the relu activation
@@ -120,22 +121,6 @@ already updates).
 init = tf.global_variables_initializer()
 sess = tf.Session()
 sess.run(init)
-
-'''
-Results with RELU+softmax and Adam Optimizer (10.000 iterations):
-    Final accuracy: 0.884
-    Final cross entropy: 0.370437
-
-Results with RELU+softmax and Gradient Descent (10.000 iterations):
-
-
-Results with sigmoid+softmax and Adam Optimizer (10.000 iterations):
-
-
-Results with sigmoid+softmax and Gradient Descent (10.000 iterations):
-   
-'''
-
 
 def training_step(i, update_test_data, update_train_data):
 
@@ -218,4 +203,58 @@ plt.plot(train_c[zoom_point:])
 plt.plot(test_c[zoom_point:])
 plt.grid(True)
 plt.show()
+
+'''
+Learning rate decay
+    Learning rate is the size of the step taken to minimize the loss function. If the learning rate is fixed, the solution
+    can oscillate around the minimum or maybe not go fast enough.
     
+    With the learning rate decay, we reduce the size of the step at each iteration, allowing the start with larger steps that
+    will converge faster, and avoid the oscillations around the minimum since with every iteration the step gets smaller. 
+    
+'''
+
+'''
+Dropout
+    For each training example/iteration, with certain probability, some neurons of a layer will be set to zero so that they
+    are not considered for training. 
+    
+    This way we force the training in a smaller (random) network, reducing overfitting.
+    
+    Moreover, we are forcing the layers to not rely completely in one previous activation, thus forcing, in a sense, that
+    layers work with a consensus of the previous layers outputs, avoiding the fixation in a single features of one layer.
+    
+    Additionally, units cannot co-adapt to other units.
+    
+    On test data, we do not use dropout probabilities to hide neurons, we use the full network.
+'''
+
+'''
+For each of the programming tasks plot accuracy and loss, and analyze whether
+your additions influence the accuracy/loss and if yes, in what way.
+
+Result without regularization:
+    Final accuracy: 0.8792
+    Final cross entropy: 0.394706
+
+Result with learning rate decay:
+    Final accuracy: 0.8764
+    Final cross entropy: 0.379108
+
+Result with dropout:
+    Final accuracy: 0.8609
+    Final cross entropy: 0.430258
+
+Result with both:
+    Final accuracy: 0.8629
+    Final cross entropy: 0.399095
+    
+Looking at the graphs, when adding dropout regularization we can see how
+it removes the overfitting tendency.
+
+Learning rate decay does not seem to have a huge effect since the oscillations
+of the solution value were not high on train data anyway.
+
+
+'''
+

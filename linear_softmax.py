@@ -57,16 +57,6 @@ init = tf.global_variables_initializer()
 sess = tf.Session()
 sess.run(init)
 
-'''
-Results with Gradient Descent (10.000 iterations):
-    Final accuracy: 0.8233
-    Final cross entropy: 0.696066
-
-Results with Adam Optimizer (10.000 iterations):
-    Final accuracy: 0.8265
-    Final cross entropy: 0.560972
-
-'''
 
 def training_step(i, update_test_data, update_train_data):
     
@@ -146,4 +136,15 @@ plt.plot(train_c[zoom_point:],'r')
 plt.plot(test_c[zoom_point:])
 plt.grid(True)
 plt.show()
-    
+
+
+'''
+Results with Gradient Descent (10.000 iterations):
+    Final accuracy: 0.8233
+    Final cross entropy: 0.696066
+
+Results with Adam Optimizer (10.000 iterations):
+    Final accuracy: 0.8265
+    Final cross entropy: 0.560972
+
+'''
