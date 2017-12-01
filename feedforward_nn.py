@@ -171,6 +171,7 @@ Results with sigmoid+softmax and Gradient Descent (10.000 iterations):
 '''
 Is there a big difference between the convergence rate of the sigmoid and the ReLU
 ? If yes, what is the reason for the difference?
+
 Yes, RELU converges faster. RELU takes care of the Vanishing gradient problem. Sigmoid
 gets saturated with large activation values, meaning that the gradient at that neuron
 will approach zero and nothing will be learned effectively. As RELU is linear, it does not

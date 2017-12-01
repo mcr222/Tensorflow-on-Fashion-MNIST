@@ -39,7 +39,10 @@ W1 = tf.Variable(tf.truncated_normal([5, 5, 1, 4], stddev=0.1))
 B1 = tf.Variable(tf.zeros([4]))
 '''
 TODO: CLARIFY W2, for each input channel (4) has 8 matrices, this would
-generate 4*8=32 output channels (but code seems to output 8 channels).
+generate 4*8=32 output channels (but code seems to output 8 channels). NO!!
+
+Each input is a 3D matrix of [x,x,4], that will be convoluted with 8 matrices of 
+dimension [5,5,4] (which generates 8 outputs, 1 per each [5,5,4] matrix)
 '''
 W2 = tf.Variable(tf.truncated_normal([5, 5, 4, 8], stddev=0.1))
 B2 = tf.Variable(tf.zeros([8]))
